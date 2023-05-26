@@ -1,0 +1,28 @@
+// app global css in SCSS form
+// body {
+//   background-image: url("/src/assets/shapelined-_JBKdviweXI-unsplash.jpg");
+//   background-repeat: no-repeat;
+//   background-size: cover;
+// }
+
+.brd {
+  border: 1px solid black;
+  border-radius: 15px;
+}
+
+.brd-nb {
+  border: 2px solid black;
+}
+
+.brd-nb-1 {
+  border: 1px solid black;
+}
+
+.brd-photo {
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.brd-white {
+  border: 1px solid white;
+}
