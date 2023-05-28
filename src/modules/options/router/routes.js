@@ -1,4 +1,5 @@
 // import { useAuthStore } from '../../auth/stores/auth-store'
+import isAdminGuard from 'src/boot/adminMiddleware'
 
 export default {
   children: [
@@ -7,22 +8,12 @@ export default {
       name: 'emptyuser',
       redirect: { name: 'settings' }
     },
-    // {
-    //   path: '/users',
-    //   name: 'users',
-    //   component: () => import('src/modules/options/pages/UsersListPage.vue')
-    // },
     {
       path: '/users',
       name: 'users',
       component: () => import('src/modules/options/pages/UsersListPage.vue'),
-      // beforeRouteEnter: (to, from, next) => {
-      //   const page = to.query.page || 1  // Obtenemos el número de página desde los parámetros de la URL
-      //   const store = useAuthStore()
-      //   store.callUsersList(page)
-      //     .then(() => next())
-      //     .catch(() => next({ to: 'error' }))
-      // }
+      beforeEnter: isAdminGuard,
+      meta: { requiresAdmin: true }
     },
     {
       path: '/settings',
@@ -39,6 +30,8 @@ export default {
       name: 'adminediting',
       component: () => import('src/modules/options/pages/AdminEditing.vue'),
       props: true,  // Habilitamos el paso de props como parámetros
+      beforeEnter: isAdminGuard,
+      meta: { requiresAdmin: true }
     }
   ]
 }

@@ -1,6 +1,7 @@
 <template>
   <!-- <slot name="header-text" /> -->
-  <q-item v-if="adminRequirements && isAdmin" clickable tag="a" @click="navigateTo">
+  <q-item v-if="adminRequirements && isAdmin" clickable :active="active"
+    active-class="bg-yellow-2 text-primary text-weight-bold" tag="a" @click="navigateTo">
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -11,7 +12,8 @@
     </q-item-section>
   </q-item>
 
-  <q-item v-if="!adminRequirements" clickable tag="a" @click="navigateTo">
+  <q-item v-if="!adminRequirements" clickable :active="active" active-class="bg-yellow-2 text-primary text-weight-bold"
+    tag="a" @click="navigateTo">
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -24,7 +26,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { useRouter } from 'vue-router';
 import useAuth from 'src/modules/auth/composables/useAuth'
 
@@ -61,11 +63,19 @@ export default defineComponent({
     const { getIsAdmin } = useAuth()
     const isAdmin = getIsAdmin
 
+    const active = computed(() => {
+      return router.currentRoute.value.name === props.link
+    })
+
     return {
       getIsAdmin,
       isAdmin,
+      active,
+
       navigateTo() {
         if (props.link.startsWith('http')) {
+          console.log(active)
+          active.value = true
           return window.open(props.link, '_blank')
         }
         router.push({ name: props.link })

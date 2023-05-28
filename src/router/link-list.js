@@ -32,34 +32,34 @@ export const linksList = [
     link: 'password',
     adminRequirements: false
   },
-  {
-    title: 'Typography',
-    caption: 'Tipos de letras en Quasar',
-    icon: 'las la-file-word',
-    link: 'typography',
-    adminRequirements: false
-  },
-  {
-    title: 'Flex Layout',
-    caption: 'Estilos con Flex',
-    icon: 'las la-align-center',
-    link: 'flex',
-    adminRequirements: false
-  },
-  {
-    title: 'Dialogs',
-    caption: 'Alertas, diálogos y confirmaciones',
-    icon: 'las la-comments',
-    link: 'dialogs',
-    adminRequirements: false
-  },
-  {
-    title: 'Forms',
-    caption: 'Inputs, validaciones...',
-    icon: 'las la-clipboard-list',
-    link: 'forms',
-    adminRequirements: false
-  },
+  // {
+  //   title: 'Typography',
+  //   caption: 'Tipos de letras en Quasar',
+  //   icon: 'las la-file-word',
+  //   link: 'typography',
+  //   adminRequirements: false
+  // },
+  // {
+  //   title: 'Flex Layout',
+  //   caption: 'Estilos con Flex',
+  //   icon: 'las la-align-center',
+  //   link: 'flex',
+  //   adminRequirements: false
+  // },
+  // {
+  //   title: 'Dialogs',
+  //   caption: 'Alertas, diálogos y confirmaciones',
+  //   icon: 'las la-comments',
+  //   link: 'dialogs',
+  //   adminRequirements: false
+  // },
+  // {
+  //   title: 'Forms',
+  //   caption: 'Inputs, validaciones...',
+  //   icon: 'las la-clipboard-list',
+  //   link: 'forms',
+  //   adminRequirements: false
+  // },
   {
     title: 'Docs',
     caption: 'quasar.dev',

@@ -24,23 +24,14 @@ export const useAuthStore = defineStore('auth', {
     currentState: (state) => state.status,
     username: (state) => state.user?.name || '', // si existe coge el name. Si no, un string vacío
     getUser: (state) => state.user,
-
-    getImage(state) {
-      if (this.status === 'authenticated') {
-        return state.user.photo
-      }
-    },
-
-    getInitials(state) {
-      if (this.status === 'authenticated') {
-        return state.user.name.charAt(0) + state.user.surname.charAt(0)
-      }
-    },
-
+    getImage: (state) => state.user.photo,
+    getSrcImgAdmin: (state) => state.userToEdit.photo,
+    getInitials: (state) => state.user.name.charAt(0) + state.user.surname.charAt(0),
     getUsersList: (state) => state.usersList,
     getUserToEdit: (state) => state.userToEdit,
     getSurname: (state) => state.user.surname,
     getIsAdmin: (state) => state.user.is_admin,
+    getIsAdminOtherUser: (state) => state.userToEdit.is_admin,
     getCurrentPage: (state) => state.currentPage,
     getTotalPages: (state) => state.totalPages
   },
@@ -119,10 +110,12 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async deleteImage() {
-      // const email = this.user.email
+    async updateImageForAdmin(photo) {
+      const email = this.userToEdit.email
+      console.log('entra')
+      console.log(photo)
       try {
-        const { data } = await authApi.post('deletephoto', { email: this.user.email })
+        const { data } = await imgApi.post('updatephoto', { email, photo })
         const { status, message } = data
         console.log(data)
 
@@ -130,7 +123,56 @@ export const useAuthStore = defineStore('auth', {
         //   ...data.data
         // }
 
+        this.userToEdit.photo = data.data.photo
+
+        return { ok: status, message }
+
+      } catch (error) {
+        return { ok: false, message: error.response.data.message }
+      }
+    },
+
+    async deleteImage() {
+      // const email = this.user.email
+      try {
+        const { data } = await authApi.post('deletephoto', { email: this.user.email })
+        const { status, message } = data
+        console.log(data)
         this.user.photo = null
+        // this.userToEdit.photo = null
+
+        return { ok: status, message }
+
+      } catch (error) {
+        console.log(error)
+        return { ok: false, message: error.response.data.message }
+      }
+    },
+
+    async deleteImageForAdmin() {
+      try {
+        const { data } = await authApi.post('deletephoto', { email: this.userToEdit.email })
+        const { status, message } = data
+        console.log(data)
+        this.userToEdit.photo = null
+        // this.userToEdit.photo = null
+
+        return { ok: status, message }
+
+      } catch (error) {
+        console.log(error)
+        return { ok: false, message: error.response.data.message }
+      }
+    },
+
+    async deleteImageForAdmin() {
+      // const email = this.user.email
+      try {
+        const { data } = await authApi.post('deletephoto', { email: this.userToEdit.email })
+        const { status, message } = data
+        console.log(data)
+        this.userToEdit.photo = null
+        // this.userToEdit.photo = null
 
         return { ok: status, message }
 
@@ -181,9 +223,9 @@ export const useAuthStore = defineStore('auth', {
 
     async updateOtherUser(user) {
       user.email = this.userToEdit.email
-      const { name, surname, email, newEmail, address, phone } = user
+      const { name, surname, email, newEmail, address, phone, is_admin } = user
       try {
-        const { data } = await authApi.put('update', { name, surname, email, newEmail, address, phone })
+        const { data } = await authApi.put('update', { name, surname, email, newEmail, address, phone, is_admin })
         const { status, message } = data
 
         // el objeto data contiene otro data dentro con los valores que buscamos
@@ -252,6 +294,10 @@ export const useAuthStore = defineStore('auth', {
       //   return { ok: false, message: error.response.data.errors }
       // }
     },
+
+    // setAdminOtherUser() {
+    //   this.userToEdit.is_admin = !this.userToEdit.is_admin
+    // },
 
     loginUser(user, token) {
       if (token) {

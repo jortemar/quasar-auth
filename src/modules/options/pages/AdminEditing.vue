@@ -1,7 +1,9 @@
 <template>
   <q-page class="row justify-center items-center text-center q-ma-lg">
     <div class="col-12 col-md-8 col-lg-6">
-      <p class="col-12 text-h5 text-weight-bolder">Edita los datos del usuario</p>
+      <p class="col-12 text-h5 text-weight-bolder">Edita los datos del usuario </p>
+      <p class="col-12 text-h5">{{ userForm.name }} {{ userForm.surname }}</p>
+
       <q-form @submit="onSubmit" class="q-pa-xl bg-white ">
         <div class="row justify-between">
           <div class="col-12 col-sm-5">
@@ -58,8 +60,12 @@
 
           <div class="q-mt-sm col-12 col-sm-5 col-md-5">
             <!-- UPLOAD FOTO -->
-            <ProfilePicture />
+            <ProfilePicture :srcImg="srcImgAdmin" :deleteImage="deleteImageForAdmin" :onUpload="updateImageForAdmin" />
           </div>
+        </div>
+
+        <div>
+          <q-checkbox class="q-mt-md" keep-color v-model="userForm.is_admin" label="Administrador" color="secondary" />
         </div>
 
         <q-btn class="q-mt-lg" rounded unelevated label="Actualizar" type="submit" />
@@ -86,15 +92,19 @@ export default defineComponent({
   components: { ProfilePicture },
 
   setup() {
-    const { callUser, userToEdit, updateOtherUser } = useAuth()
+    const { callUser, userToEdit, updateOtherUser, srcImgAdmin, isAdminOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
+    // const { callUser, userToEdit, updateOtherUser, srcImgAdmin, isAdminOtherUser, setAdminOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
     const route = useRoute()
+    console.log(isAdminOtherUser.value)
+    // const adminRights = ref(isAdminOtherUser.value)
 
     const userForm = ref({
       name: '',
       surname: '',
       newEmail: '',
       address: '',
-      phone: ''
+      phone: '',
+      is_admin: '',
     })
 
     onBeforeMount(async () => {
@@ -109,13 +119,24 @@ export default defineComponent({
         userForm.value.newEmail = newValue.email
         userForm.value.address = newValue.address
         userForm.value.phone = newValue.phone
+        userForm.value.is_admin = newValue.is_admin
       }
     })
+
+    // watch(adminRights, () => {
+    //   setAdminOtherUser()
+    // })
 
     return {
       callUser,
       userToEdit,
       userForm,
+      srcImgAdmin,
+      isAdminOtherUser,
+      deleteImageForAdmin,
+      updateImageForAdmin,
+      // adminRights: ref(isAdminOtherUser),
+      // adminRights,
 
       onSubmit: async () => {
         const { ok, message } = await updateOtherUser(userForm.value)

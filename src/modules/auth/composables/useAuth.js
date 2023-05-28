@@ -1,5 +1,6 @@
 import { useAuthStore } from '../stores/auth-store'
 import { computed } from 'vue'
+import { showNotifications } from '../../auth/helpers/notifications'
 
 const useAuth = () => {
   const store = useAuthStore()
@@ -42,10 +43,43 @@ const useAuth = () => {
     return resp
   }
 
-  const deleteImage = async () => {
-    const resp = await store.deleteImage()
+  const updateImageForAdmin = async (image) => {
+    const resp = await store.updateImageForAdmin(image)
     return resp
   }
+
+  // const deleteImage = async () => {
+  //   const resp = await store.deleteImage()
+  //   return resp
+  // }
+
+  const deleteImage = async () => {
+    const { ok, message } = await store.deleteImage()
+
+    if (!ok) {
+      showNotifications(ok, 'Error', message)
+    }
+    else {
+      showNotifications(ok, 'Éxito', message, 'positive')
+    }
+  }
+
+  const deleteImageForAdmin = async () => {
+    const { ok, message } = await store.deleteImageForAdmin()
+
+    if (!ok) {
+      showNotifications(ok, 'Error', message)
+    }
+    else {
+      showNotifications(ok, 'Éxito', message, 'positive')
+    }
+  }
+
+
+  // const deleteImageForAdmin = async () => {
+  //   const resp = await store.deleteImageForAdmin()
+  //   return resp
+  // }
 
   const callUsers = async (page) => {
     const resp = await store.callUsersList(page)
@@ -60,27 +94,36 @@ const useAuth = () => {
     store.setCurrentPage(page)
   }
 
+  // const setAdminOtherUser = () => {
+  //   store.setAdminOtherUser
+  // }
+
   return {
+    callUser,
+    callUsers,
     createUser,
+    deleteImage,
+    deleteImageForAdmin,
     loginUser,
     logoutUser,
-    updateUser,
+    setCurrentPage,
+    updateImage,
+    updateImageForAdmin,
     updateOtherUser,
     updatePassword,
-    updateImage,
-    deleteImage,
-    callUsers,
-    callUser,
-    setCurrentPage,
+    updateUser,
+    // setAdminOtherUser,
 
     authStatus: computed(() => store.currentState),
     username: computed(() => store.username),
     getUser: computed(() => store.getUser),
     srcImg: computed(() => store.getImage),
+    srcImgAdmin: computed(() => store.getSrcImgAdmin),
     getInitials: computed(() => store.getInitials),
     // getInitialsOthers: computed(() => store.getInitialsOthers),
     getSurname: computed(() => store.getSurname),
     getIsAdmin: computed(() => store.getIsAdmin),
+    isAdminOtherUser: computed(() => store.getIsAdminOtherUser),
     currentPageUsers: computed(() => store.getUsersList),
     userToEdit: computed(() => store.getUserToEdit),
     currentPage: computed(() => store.getCurrentPage),

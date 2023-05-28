@@ -1,5 +1,5 @@
 <template>
-  <div class="pagination-controls q-mt-sm">
+  <div class="pagination-controls row justify-center q-mt-sm">
     <q-pagination v-model="current" :min="1" :max="totalPages" :input="true" :size="size" :color="color"
       @update:model-value="onPageInput" />
   </div>

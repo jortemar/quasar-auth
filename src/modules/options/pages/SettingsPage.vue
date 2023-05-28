@@ -58,7 +58,7 @@
 
           <div class="q-mt-sm col-12 col-sm-5 col-md-5">
             <!-- UPLOAD FOTO -->
-            <ProfilePicture />
+            <ProfilePicture :srcImg="srcImg" :deleteImage="deleteImage" :onUpload="updateImage" />
           </div>
         </div>
 
@@ -84,7 +84,7 @@ export default defineComponent({
   components: { ProfilePicture },
 
   setup() {
-    const { updateUser, getUser } = useAuth()
+    const { updateUser, getUser, srcImg, deleteImage, updateImage } = useAuth()
     const user = getUser
 
     const userForm = ref({
@@ -98,6 +98,9 @@ export default defineComponent({
     return {
       userForm,
       getUser,
+      srcImg,
+      deleteImage,
+      updateImage,
 
       onSubmit: async () => {
         const { ok, message } = await updateUser(userForm.value)

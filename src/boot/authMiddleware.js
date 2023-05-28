@@ -1,3 +1,4 @@
+// validamos ruta solo si hay token
 import { Cookies } from "quasar"
 
 const isAuthenticatedGuard = async (to, from, next) => {
