@@ -4,22 +4,22 @@
       <q-toolbar>
         <q-btn flat dense round icon="las la-bars" size="xl" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title v-if="!srcImg && !getSurname" class="text-h4">
+        <q-toolbar-title v-if="!user.photo && !user.surname" class="text-h4">
           Quasar App
         </q-toolbar-title>
 
-        <q-toolbar-title v-if="srcImg">
-          <q-img class="brd-nb bg-white" :src="srcImg" spinner-color="white" style="height:60px; width:60px;" />
+        <q-toolbar-title v-if="user.photo">
+          <q-img class="brd-nb bg-white" :src="user.photo" spinner-color="white" style="height:60px; width:60px;" />
         </q-toolbar-title>
 
-        <q-toolbar-title v-if="!srcImg && getSurname" class="text-h4 text-center">
+        <q-toolbar-title v-if="!user.photo && user.surname" class="text-h4 text-center">
           <div class="brd-white bg-secondary" style="height:60px; width:60px;">
             <p class="q-mt-sm">{{ getInitials }}</p>
           </div>
         </q-toolbar-title>
 
-        <div class="text-h6" v-if="username">
-          Hola, {{ username }}
+        <div class="text-h6" v-if="user.name">
+          Hola, {{ user.name }}
           <q-btn class="brd-white q-ml-lg" size="md" color="warning" unelevated icon="logout" @click="onLogout" />
         </div>
         <div v-else>Quasar v{{ $q.version }}</div>
@@ -61,16 +61,16 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const leftDrawerOpen = ref(false)
-    const { username, logoutUser, authStatus, srcImg, getUser, getInitials, getSurname } = useAuth()
+    const { authStatus, getInitials, logoutUser, user } = useAuth()
 
     return {
-      username,
+      // username,
       authStatus,
       linksList,
       leftDrawerOpen,
-      getUser,
-      srcImg,
-      getSurname,
+      user,
+      // srcImg,
+      // getSurname,
       getInitials,
 
       toggleLeftDrawer() {

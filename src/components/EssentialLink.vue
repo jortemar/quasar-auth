@@ -60,17 +60,17 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter()
-    const { getIsAdmin } = useAuth()
-    const isAdmin = getIsAdmin
+    const { user } = useAuth()
+    const isAdmin = user
 
     const active = computed(() => {
       return router.currentRoute.value.name === props.link
     })
 
     return {
-      getIsAdmin,
-      isAdmin,
       active,
+      isAdmin,
+      user,
 
       navigateTo() {
         if (props.link.startsWith('http')) {

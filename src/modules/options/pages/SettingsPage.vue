@@ -58,7 +58,7 @@
 
           <div class="q-mt-sm col-12 col-sm-5 col-md-5">
             <!-- UPLOAD FOTO -->
-            <ProfilePicture :srcImg="srcImg" :deleteImage="deleteImage" :onUpload="updateImage" />
+            <ProfilePicture :srcImg="user.photo" :deleteImage="deleteImage" :onUpload="updateImage" />
           </div>
         </div>
 
@@ -84,21 +84,23 @@ export default defineComponent({
   components: { ProfilePicture },
 
   setup() {
-    const { updateUser, getUser, srcImg, deleteImage, updateImage } = useAuth()
-    const user = getUser
+    const { updateUser, user, deleteImage, updateImage } = useAuth()
+    // const { updateUser, getUser, srcImg, deleteImage, updateImage } = useAuth()
+    const user2 = user
 
     const userForm = ref({
-      name: user.value.name,
-      surname: user.value.surname,
-      newEmail: user.value.email,
-      address: user.value.address,
-      phone: user.value.phone
+      name: user2.value.name,
+      surname: user2.value.surname,
+      newEmail: user2.value.email,
+      address: user2.value.address,
+      phone: user2.value.phone,
+      is_admin: user2.value.is_admin
     })
 
     return {
       userForm,
-      getUser,
-      srcImg,
+      user,
+      // srcImg,
       deleteImage,
       updateImage,
 

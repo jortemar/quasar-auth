@@ -60,7 +60,8 @@
 
           <div class="q-mt-sm col-12 col-sm-5 col-md-5">
             <!-- UPLOAD FOTO -->
-            <ProfilePicture :srcImg="srcImgAdmin" :deleteImage="deleteImageForAdmin" :onUpload="updateImageForAdmin" />
+            <ProfilePicture :srcImg="userForAdmin.photo" :deleteImage="deleteImageForAdmin"
+              :onUpload="updateImageForAdmin" />
           </div>
         </div>
 
@@ -92,10 +93,9 @@ export default defineComponent({
   components: { ProfilePicture },
 
   setup() {
-    const { callUser, userToEdit, updateOtherUser, srcImgAdmin, isAdminOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
-    // const { callUser, userToEdit, updateOtherUser, srcImgAdmin, isAdminOtherUser, setAdminOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
+    const { callUser, userForAdmin, updateOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
+    // const { callUser, userForAdmin, updateOtherUser, srcImgAdmin, isAdminOtherUser, setAdminOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
     const route = useRoute()
-    console.log(isAdminOtherUser.value)
     // const adminRights = ref(isAdminOtherUser.value)
 
     const userForm = ref({
@@ -112,7 +112,7 @@ export default defineComponent({
       await callUser(userId)
     })
 
-    watch(userToEdit, (newValue) => {
+    watch(userForAdmin, (newValue) => {
       if (newValue) {
         userForm.value.name = newValue.name
         userForm.value.surname = newValue.surname
@@ -129,10 +129,10 @@ export default defineComponent({
 
     return {
       callUser,
-      userToEdit,
+      userForAdmin,
       userForm,
-      srcImgAdmin,
-      isAdminOtherUser,
+      // srcImgAdmin,
+      // isAdminOtherUser,
       deleteImageForAdmin,
       updateImageForAdmin,
       // adminRights: ref(isAdminOtherUser),

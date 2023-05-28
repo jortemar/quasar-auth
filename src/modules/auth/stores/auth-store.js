@@ -1,39 +1,29 @@
-import { defineStore } from "pinia";
+import { defineStore } from "pinia"
 import authApi from "src/api/authApi"
 import imgApi from "src/api/imgApi"
-import { Cookies } from "quasar";
-// import { ref } from "vue";
-// import router from "../router";
-// import myFetch from ""
+import { Cookies } from "quasar"
 
 export const useAuthStore = defineStore('auth', {
   persist: true,
 
   state: () => ({
+    currentPage: 1,
     status: 'authenticating',  // 'authenticated'   'no-authenticated'
     token: null,
+    totalPages: 0,
     user: null,  // name, email, password, address, phone
+    userForAdmin: null,
     usersList: [],
-    userToEdit: null,
-
-    currentPage: 1,
-    totalPages: 0
   }),
 
   getters: {
     currentState: (state) => state.status,
-    username: (state) => state.user?.name || '', // si existe coge el name. Si no, un string vacío
-    getUser: (state) => state.user,
-    getImage: (state) => state.user.photo,
-    getSrcImgAdmin: (state) => state.userToEdit.photo,
-    getInitials: (state) => state.user.name.charAt(0) + state.user.surname.charAt(0),
-    getUsersList: (state) => state.usersList,
-    getUserToEdit: (state) => state.userToEdit,
-    getSurname: (state) => state.user.surname,
-    getIsAdmin: (state) => state.user.is_admin,
-    getIsAdminOtherUser: (state) => state.userToEdit.is_admin,
     getCurrentPage: (state) => state.currentPage,
-    getTotalPages: (state) => state.totalPages
+    getInitials: (state) => state.user.name.charAt(0) + state.user.surname.charAt(0),
+    getTotalPages: (state) => state.totalPages,
+    getUser: (state) => state.user,
+    getUserForAdmin: (state) => state.userForAdmin,
+    getUsersList: (state) => state.usersList
   },
 
   actions: {
@@ -79,6 +69,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = {}
         this.token = null
         this.status = 'not-authenticated'
+        this.userForAdmin = {}
         Cookies.remove('token')
         return { ok: status, message }
       }
@@ -111,7 +102,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async updateImageForAdmin(photo) {
-      const email = this.userToEdit.email
+      const email = this.userForAdmin.email
       console.log('entra')
       console.log(photo)
       try {
@@ -123,7 +114,7 @@ export const useAuthStore = defineStore('auth', {
         //   ...data.data
         // }
 
-        this.userToEdit.photo = data.data.photo
+        this.userForAdmin.photo = data.data.photo
 
         return { ok: status, message }
 
@@ -151,10 +142,10 @@ export const useAuthStore = defineStore('auth', {
 
     async deleteImageForAdmin() {
       try {
-        const { data } = await authApi.post('deletephoto', { email: this.userToEdit.email })
+        const { data } = await authApi.post('deletephoto', { email: this.userForAdmin.email })
         const { status, message } = data
         console.log(data)
-        this.userToEdit.photo = null
+        this.userForAdmin.photo = null
         // this.userToEdit.photo = null
 
         return { ok: status, message }
@@ -166,13 +157,11 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async deleteImageForAdmin() {
-      // const email = this.user.email
       try {
-        const { data } = await authApi.post('deletephoto', { email: this.userToEdit.email })
+        const { data } = await authApi.post('deletephoto', { email: this.userForAdmin.email })
         const { status, message } = data
         console.log(data)
-        this.userToEdit.photo = null
-        // this.userToEdit.photo = null
+        this.userForAdmin.photo = null
 
         return { ok: status, message }
 
@@ -202,9 +191,10 @@ export const useAuthStore = defineStore('auth', {
 
     async updateUser(user) {
       user.email = this.user.email
-      const { name, surname, email, newEmail, address, phone } = user
+      const { name, surname, email, newEmail, address, phone, is_admin } = user
+      console.log(is_admin)
       try {
-        const { data } = await authApi.put('update', { name, surname, email, newEmail, address, phone })
+        const { data } = await authApi.put('update', { name, surname, email, newEmail, address, phone, is_admin })
         const { status, message } = data
 
         // el objeto data contiene otro data dentro con los valores que buscamos
@@ -222,7 +212,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async updateOtherUser(user) {
-      user.email = this.userToEdit.email
+      user.email = this.userForAdmin.email
       const { name, surname, email, newEmail, address, phone, is_admin } = user
       try {
         const { data } = await authApi.put('update', { name, surname, email, newEmail, address, phone, is_admin })
@@ -230,7 +220,7 @@ export const useAuthStore = defineStore('auth', {
 
         // el objeto data contiene otro data dentro con los valores que buscamos
         // volcamos en el user del state esos campos (name, email, address, phone)
-        this.userToEdit = {
+        this.userForAdmin = {
           ...data.data
         }
 
@@ -269,10 +259,10 @@ export const useAuthStore = defineStore('auth', {
       const { data } = await authApi.get(`user/${id}`)
 
       console.log(data.data)
-      this.userToEdit = {
+      this.userForAdmin = {
         ...data.data
       }
-      console.log(this.userToEdit)
+      console.log(this.userForAdmin)
       // return this.userToEdit
 
 
