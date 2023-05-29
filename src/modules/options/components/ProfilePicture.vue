@@ -61,10 +61,6 @@ export default defineComponent({
 }
 
 .q-img {
-  // width: 200px;
-  // position: fixed;
-  // bottom: 150px;
-  // right: 20px;
   box-shadow: 0px 5px 10px rgba($color: #000000, $alpha: 0.2);
 }
 </style>

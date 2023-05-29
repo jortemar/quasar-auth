@@ -1,5 +1,4 @@
 <template>
-  <!-- <slot name="header-text" /> -->
   <q-item v-if="adminRequirements && isAdmin" clickable :active="active"
     active-class="bg-yellow-2 text-primary text-weight-bold" tag="a" @click="navigateTo">
     <q-item-section v-if="icon" avatar>
@@ -61,7 +60,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter()
     const { user } = useAuth()
-    const isAdmin = user
+    const isAdmin = user.value.is_admin
 
     const active = computed(() => {
       return router.currentRoute.value.name === props.link

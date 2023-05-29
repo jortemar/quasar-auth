@@ -24,7 +24,6 @@
 
 <script>
 import { defineComponent } from 'vue'
-// import useAuth from '../../auth/composables/useAuth'
 
 export default defineComponent({
   name: 'UserComponent',
@@ -32,11 +31,7 @@ export default defineComponent({
     user: {
       type: Object,
       required: true
-    },
-    // currentPage: {
-    //   type: Number,
-    //   required: true
-    // }
+    }
   }
 })
 </script>

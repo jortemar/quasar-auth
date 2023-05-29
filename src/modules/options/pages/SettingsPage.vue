@@ -84,25 +84,22 @@ export default defineComponent({
   components: { ProfilePicture },
 
   setup() {
-    const { updateUser, user, deleteImage, updateImage } = useAuth()
-    // const { updateUser, getUser, srcImg, deleteImage, updateImage } = useAuth()
-    const user2 = user
+    const { deleteImage, updateImage, updateUser, user } = useAuth()
 
     const userForm = ref({
-      name: user2.value.name,
-      surname: user2.value.surname,
-      newEmail: user2.value.email,
-      address: user2.value.address,
-      phone: user2.value.phone,
-      is_admin: user2.value.is_admin
+      name: user.value.name,
+      surname: user.value.surname,
+      newEmail: user.value.email,
+      address: user.value.address,
+      phone: user.value.phone,
+      is_admin: user.value.is_admin
     })
 
     return {
-      userForm,
-      user,
-      // srcImg,
       deleteImage,
       updateImage,
+      user,
+      userForm,
 
       onSubmit: async () => {
         const { ok, message } = await updateUser(userForm.value)

@@ -5,6 +5,11 @@ import { showNotifications } from '../../auth/helpers/notifications'
 const useAuth = () => {
   const store = useAuthStore()
 
+  const callAllUsers = async () => {
+    const resp = await store.allUsers()
+    return resp
+  }
+
   const callUser = async (id) => {
     await store.callUser(id)
   }
@@ -48,10 +53,7 @@ const useAuth = () => {
 
   const logoutUser = async () => {
     const resp = await store.logout()
-    store.setCurrentPage(1)   // aprovechamos el logout para inicializar currentPage de nuestro state
     return resp
-    // se puede incluir en el logout un window.location. Al hacerse el refresh del navegador web se purga el estado
-    // store.commit('journal/clearEntries')
   }
 
   const setCurrentPage = (page) => {
@@ -84,6 +86,7 @@ const useAuth = () => {
   }
 
   return {
+    callAllUsers,
     callUser,
     callUsers,
     createUser,

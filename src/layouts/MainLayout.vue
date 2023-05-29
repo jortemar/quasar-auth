@@ -28,8 +28,8 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-1">
       <q-list>
-        <q-item-label header class="text-grey-8">
-          Essential Links
+        <q-item-label header class="text-subtitle2 text-grey-8">
+          Menú
         </q-item-label>
 
         <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
@@ -46,8 +46,8 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import EssentialLink from 'components/EssentialLink.vue'
 import { linksList } from '../router/link-list'
+import EssentialLink from 'components/EssentialLink.vue'
 import useAuth from '../modules/auth/composables/useAuth'
 import { showNotifications } from '../modules/auth/helpers/notifications'
 
@@ -64,14 +64,11 @@ export default defineComponent({
     const { authStatus, getInitials, logoutUser, user } = useAuth()
 
     return {
-      // username,
       authStatus,
-      linksList,
-      leftDrawerOpen,
-      user,
-      // srcImg,
-      // getSurname,
       getInitials,
+      leftDrawerOpen,
+      linksList,
+      user,
 
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value

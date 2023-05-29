@@ -84,9 +84,8 @@
 import { defineComponent, ref, onBeforeMount, watch } from 'vue'
 import ProfilePicture from '../components/ProfilePicture.vue'
 import useAuth from '../../auth/composables/useAuth'
-import { showNotifications } from '../../auth/helpers/notifications'
 import { useRoute } from 'vue-router'
-// import { useRoute, useRouter } from 'vue-router'
+import { showNotifications } from '../../auth/helpers/notifications'
 
 export default defineComponent({
   name: 'AdminEditing',
@@ -94,9 +93,7 @@ export default defineComponent({
 
   setup() {
     const { callUser, userForAdmin, updateOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
-    // const { callUser, userForAdmin, updateOtherUser, srcImgAdmin, isAdminOtherUser, setAdminOtherUser, deleteImageForAdmin, updateImageForAdmin } = useAuth()
     const route = useRoute()
-    // const adminRights = ref(isAdminOtherUser.value)
 
     const userForm = ref({
       name: '',
@@ -112,6 +109,7 @@ export default defineComponent({
       await callUser(userId)
     })
 
+    // Si no ponemos el watch, hay que recargar la página para que se incrusten los valores
     watch(userForAdmin, (newValue) => {
       if (newValue) {
         userForm.value.name = newValue.name
@@ -123,20 +121,12 @@ export default defineComponent({
       }
     })
 
-    // watch(adminRights, () => {
-    //   setAdminOtherUser()
-    // })
-
     return {
       callUser,
-      userForAdmin,
-      userForm,
-      // srcImgAdmin,
-      // isAdminOtherUser,
       deleteImageForAdmin,
       updateImageForAdmin,
-      // adminRights: ref(isAdminOtherUser),
-      // adminRights,
+      userForAdmin,
+      userForm,
 
       onSubmit: async () => {
         const { ok, message } = await updateOtherUser(userForm.value)

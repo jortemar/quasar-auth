@@ -12,10 +12,6 @@ import useAuth from '../../auth/composables/useAuth'
 export default defineComponent({
   name: 'PaginationControls',
   props: {
-    // currentPage: {
-    //   type: Number,
-    //   required: true,
-    // },
     totalPages: {
       type: Number,
       required: true,

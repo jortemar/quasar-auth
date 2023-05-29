@@ -6,6 +6,7 @@ import { Cookies } from "quasar"
 export const useAuthStore = defineStore('auth', {
   persist: true,
 
+  // propiedades
   state: () => ({
     currentPage: 1,
     status: 'authenticating',  // 'authenticated'   'no-authenticated'
@@ -16,23 +17,27 @@ export const useAuthStore = defineStore('auth', {
     usersList: [],
   }),
 
+  // getters
   getters: {
     currentState: (state) => state.status,
     getCurrentPage: (state) => state.currentPage,
-    getInitials: (state) => state.user.name.charAt(0) + state.user.surname.charAt(0),
+    getInitials: (state) => state.user.name.charAt(0).toUpperCase() + state.user.surname.charAt(0).toUpperCase(),
     getTotalPages: (state) => state.totalPages,
     getUser: (state) => state.user,
     getUserForAdmin: (state) => state.userForAdmin,
     getUsersList: (state) => state.usersList
   },
 
+  // acciones (llamadas a endpoint y modificaciones del state)
   actions: {
+    // Creación de usuario
+    // Llamamos la ruta mandando name, email y password
+    // Recogemos el error que viene del back
     async createUser(user) {
       const { name, email, password } = user
       try {
         const { data } = await authApi.post('register', { name, email, password })
         const { status, message } = data
-        delete user.password
         return { ok: status, message }
       }
       catch (error) {
@@ -41,6 +46,9 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    // Login del usuario
+    // Mandamos email y password
+    // Recogemos el usuario en nuestro state llamando a loginUser
     async signInUser(user) {
       const { email, password } = user
       try {
@@ -50,7 +58,6 @@ export const useAuthStore = defineStore('auth', {
         user = {
           ...data.data
         }
-        console.log(user)
         this.loginUser(user, token)
         return { ok: status, message }
       }
@@ -60,16 +67,18 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    // Logout del usuario
+    // Inicializamos el state y llamamos al endpoint
+    // Eliminamos la cookie que almacena el token
     async logout() {
       try {
-        const { data } = await authApi.get('logout')
-        const { status, message } = data
-        // si inicializamos el user en null, todos los getters que
-        // llamen propiedades null darán error tras el logout
-        this.user = {}
         this.token = null
         this.status = 'not-authenticated'
+        this.user = {}
         this.userForAdmin = {}
+        this.currentPage = 1
+        const { data } = await authApi.get('logout')
+        const { status, message } = data
         Cookies.remove('token')
         return { ok: status, message }
       }
@@ -79,130 +88,92 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    // Actualización de la foto de usuario
+    // Mandamos email e imagen
+    // Actualizamos state
     async updateImage(photo) {
-      const email = this.user.email
-      console.log('entra')
-      console.log(photo)
       try {
-        const { data } = await imgApi.post('updatephoto', { email, photo })
+        const { data } = await imgApi.post('updatephoto', { email: this.user.email, photo })
         const { status, message } = data
-        console.log(data)
-
-        // this.user = {
-        //   ...data.data
-        // }
-
         this.user.photo = data.data.photo
-
         return { ok: status, message }
-
-      } catch (error) {
+      }
+      catch (error) {
+        console.log(error)
         return { ok: false, message: error.response.data.message }
       }
     },
 
+    // Actualización de cualquier imagen para el administrador
+    // Accedemos con el email del usuario a editar
     async updateImageForAdmin(photo) {
-      const email = this.userForAdmin.email
-      console.log('entra')
-      console.log(photo)
       try {
-        const { data } = await imgApi.post('updatephoto', { email, photo })
+        const { data } = await imgApi.post('updatephoto', { email: this.userForAdmin.email, photo })
         const { status, message } = data
-        console.log(data)
-
-        // this.user = {
-        //   ...data.data
-        // }
-
         this.userForAdmin.photo = data.data.photo
-
         return { ok: status, message }
-
-      } catch (error) {
+      }
+      catch (error) {
+        console.log(error)
         return { ok: false, message: error.response.data.message }
       }
     },
 
+    // Cualquier usuario puede eliminar su propia foto
     async deleteImage() {
-      // const email = this.user.email
       try {
         const { data } = await authApi.post('deletephoto', { email: this.user.email })
         const { status, message } = data
-        console.log(data)
         this.user.photo = null
-        // this.userToEdit.photo = null
-
         return { ok: status, message }
-
       } catch (error) {
         console.log(error)
         return { ok: false, message: error.response.data.message }
       }
     },
 
+    // El administrador puede eliminar la foto de cualquier usuario
     async deleteImageForAdmin() {
       try {
         const { data } = await authApi.post('deletephoto', { email: this.userForAdmin.email })
         const { status, message } = data
         console.log(data)
         this.userForAdmin.photo = null
-        // this.userToEdit.photo = null
-
         return { ok: status, message }
-
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error)
         return { ok: false, message: error.response.data.message }
       }
     },
 
-    async deleteImageForAdmin() {
-      try {
-        const { data } = await authApi.post('deletephoto', { email: this.userForAdmin.email })
-        const { status, message } = data
-        console.log(data)
-        this.userForAdmin.photo = null
-
-        return { ok: status, message }
-
-      } catch (error) {
-        console.log(error)
-        return { ok: false, message: error.response.data.message }
-      }
-    },
-
+    // El usuario puede actualizar su contraseña
     async updatePassword(user) {
       user.email = this.user.email
       const { email, password, newPassword } = user
       try {
         const { data } = await authApi.put('updatepassword', { email, password, newPassword })
         const { status, message } = data
-
         this.user = {
           ...data.data
         }
-
         return { ok: status, message }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error)
         return { ok: false, message: error.response.data.message }
       }
     },
 
+    // El usuario puede actualizar cualquiera de sus otros datos
     async updateUser(user) {
-      user.email = this.user.email
-      const { name, surname, email, newEmail, address, phone, is_admin } = user
-      console.log(is_admin)
+      const { name, surname, newEmail, address, phone, is_admin } = user
       try {
-        const { data } = await authApi.put('update', { name, surname, email, newEmail, address, phone, is_admin })
+        const { data } = await authApi.put('update', { name, surname, email: this.user.email, newEmail, address, phone, is_admin })
         const { status, message } = data
-
-        // el objeto data contiene otro data dentro con los valores que buscamos
-        // volcamos en el user del state esos campos (name, email, address, phone)
         this.user = {
           ...data.data
         }
-
         return { ok: status, message }
       }
       catch (error) {
@@ -211,19 +182,16 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    // El administrador puede hacer lo propio con cualquier usuario
     async updateOtherUser(user) {
       user.email = this.userForAdmin.email
       const { name, surname, email, newEmail, address, phone, is_admin } = user
       try {
         const { data } = await authApi.put('update', { name, surname, email, newEmail, address, phone, is_admin })
         const { status, message } = data
-
-        // el objeto data contiene otro data dentro con los valores que buscamos
-        // volcamos en el user del state esos campos (name, email, address, phone)
         this.userForAdmin = {
           ...data.data
         }
-
         return { ok: status, message }
       }
       catch (error) {
@@ -232,63 +200,33 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    // async callUsersList() {
-    //   const { data } = await authApi.get('users', { email: this.user.email })
-    //   this.usersList = [...data]
-    // },
-
+    // Llamamos a los usuarios paginados, con un endpoint dinámico que incluye la variable $page
     async callUsersList(page) {
-      console.log(page)
-      const { data } = await authApi.get(`users?page=${page}`)
+      const { data } = await authApi.get(`paginatedusers?page=${page}`)
       console.log(data)
       this.usersList = [...data.data]
-      console.log(this.usersList)
       this.currentPage = data.current_page
-      console.log(this.currentPage)
       this.totalPages = data.last_page
-      console.log(this.totalPages)
-
-      // no almacenar en el state. devolver directamente al componente
-
-      // en el store solo almacenamos la información que usamos en muchos sitios
-      // nombre usuario, token ...
     },
 
+    // Llamamos a todos los usuarios. Utilizado para la barra de búsqueda
+    async allUsers() {
+      const { data } = await authApi.get('users')
+      console.log(data)
+      this.usersList = [...data]
+    },
 
+    // Obtenemos un usuario concreto, localizado con su id
     async callUser(id) {
       const { data } = await authApi.get(`user/${id}`)
-
       console.log(data.data)
       this.userForAdmin = {
         ...data.data
       }
       console.log(this.userForAdmin)
-      // return this.userToEdit
-
-
-      // try {
-      //   const { data } = await authApi.get(`user/${id}`)
-      //   const { status, message } = data
-
-      //   console.log(data)
-
-      //   this.userToEdit = {
-      //     ...data.data
-      //   }
-
-      //   console.log(this.userToEdit)
-
-      //   return { ok: status, message }
-
-      // } catch (error) {
-      //   return { ok: false, message: error.response.data.errors }
-      // }
     },
 
-    // setAdminOtherUser() {
-    //   this.userToEdit.is_admin = !this.userToEdit.is_admin
-    // },
-
+    // Almacenamos el token en las cookies y actualizamos el state
     loginUser(user, token) {
       if (token) {
         Cookies.set('token', token)
@@ -298,6 +236,7 @@ export const useAuthStore = defineStore('auth', {
       this.status = 'authenticated'
     },
 
+    // Un set para actualizar el currentPage de nuestro state
     setCurrentPage(page) {
       this.currentPage = page
     }
